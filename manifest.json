@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "AI-Select",
+  "version": "0.1.0",
+  "description": "Summarize selected webpage text with Chrome's built-in AI.",
+  "permissions": [],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}
