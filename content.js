@@ -19,17 +19,26 @@
   popup.id = ID_POPUP;
   popup.hidden = true;
 
+  const popupContent = document.createElement('div');
+  popupContent.id = 'ai-select-popup-content';
+
+  const closeButton = document.createElement('button');
+  closeButton.id = 'ai-select-popup-close';
+  closeButton.innerHTML = '&times;';
+  closeButton.setAttribute('aria-label', 'Close summary');
+  closeButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    popup.hidden = true;
+  });
+
+  popup.append(popupContent, closeButton);
+
   root.append(actionButton, popup);
   document.documentElement.appendChild(root);
 
-  function hideButtonAndPopup() {
-    actionButton.style.display = 'none';
-    popup.hidden = true;
-    popup.textContent = '';
-  }
-
   function showPopup(message, isError = false) {
-    popup.textContent = message;
+    popupContent.textContent = message;
     popup.dataset.state = isError ? 'error' : 'ready';
     popup.hidden = false;
 
@@ -92,7 +101,12 @@
       length: 'short',
       monitor(monitorHandle) {
         monitorHandle.addEventListener('downloadprogress', (event) => {
-          showPopup(`Downloading model: ${Math.round(event.loaded * 100)}%`);
+          const loadedPercent = event.total ? Math.round((event.loaded / event.total) * 100) : Math.round(event.loaded * 100);
+          if (loadedPercent >= 100) {
+            showPopup('Summarizing...');
+          } else {
+            showPopup(`Downloading model: ${loadedPercent}%`);
+          }
         });
       }
     });
@@ -102,10 +116,14 @@
     return summary;
   }
 
-  document.addEventListener('mouseup', () => {
+  document.addEventListener('mouseup', (event) => {
+    if (popup.contains(event.target) || actionButton.contains(event.target)) {
+      return;
+    }
+
     const info = getSelectionInfo();
     if (!info) {
-      hideButtonAndPopup();
+      actionButton.style.display = 'none';
       return;
     }
 
@@ -113,14 +131,6 @@
     selectionRect = info.rect;
     positionButton(info.rect);
     popup.hidden = true;
-  });
-
-  document.addEventListener('mousedown', (event) => {
-    if (event.target === actionButton || popup.contains(event.target)) {
-      return;
-    }
-
-    hideButtonAndPopup();
   });
 
   actionButton.addEventListener('click', async (event) => {
