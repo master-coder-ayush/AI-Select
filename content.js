@@ -95,10 +95,15 @@
       throw new Error('Click the AI button again to allow model initialization.');
     }
 
+    const options = await chrome.storage.sync.get(['type', 'format', 'length']);
+    const type = options.type || 'key-points';
+    const format = options.format || 'markdown';
+    const length = options.length || 'short';
+
     const summarizer = await Summarizer.create({
-      type: 'tldr',
-      format: 'plain-text',
-      length: 'short',
+      type: type,
+      format: format,
+      length: length,
       monitor(monitorHandle) {
         monitorHandle.addEventListener('downloadprogress', (event) => {
           const loadedPercent = event.total ? Math.round((event.loaded / event.total) * 100) : Math.round(event.loaded * 100);

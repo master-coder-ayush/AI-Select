@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Select Settings</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-Select Settings</h1>
+            <p>Configure how your selected text is summarized.</p>
+        </header>
+
+        <main>
+            <div class="form-group">
+                <label for="type">Summary Type</label>
+                <select id="type">
+                    <option value="key-points">Key Points</option>
+                    <option value="tldr">TLDR</option>
+                    <option value="teaser">Teaser</option>
+                    <option value="headline">Headline</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="format">Format</label>
+                <select id="format">
+                    <option value="markdown">Markdown</option>
+                    <option value="plain-text">Plain Text</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="length">Length</label>
+                <select id="length">
+                    <option value="short">Short</option>
+                    <option value="medium">Medium</option>
+                    <option value="long">Long</option>
+                </select>
+            </div>
+
+            <div id="save-status" class="status-message">Saved successfully!</div>
+        </main>
+
+        <footer>
+            <h3>Requirements</h3>
+            <p>To use this extension, your device must meet the following hardware criteria:</p>
+            <ul>
+                <li><strong>OS:</strong> Windows 10/11, macOS 13+, Linux, or ChromeOS (16389.0.0+)</li>
+                <li><strong>Storage:</strong> At least 22 GB free space</li>
+                <li><strong>GPU/CPU:</strong> >4GB VRAM (GPU) & >16GB RAM + 4 Cores (CPU)</li>
+                <li><strong>Network:</strong> Unmetered connection (for initial model download)</li>
+            </ul>
+            <p>
+                <a href="https://developer.chrome.com/docs/ai/summarizer-api" target="_blank" rel="noopener noreferrer">
+                    View official Summarizer API documentation
+                </a>
+            </p>
+        </footer>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>

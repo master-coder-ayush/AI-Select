@@ -1,0 +1,104 @@
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9fafb;
+    color: #111827;
+    width: 340px;
+}
+
+.container {
+    padding: 16px;
+}
+
+header h1 {
+    font-size: 18px;
+    margin: 0 0 4px 0;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+header p {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 0 16px 0;
+}
+
+.form-group {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #374151;
+}
+
+select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+}
+
+select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.status-message {
+    font-size: 12px;
+    color: #10b981;
+    text-align: center;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    height: 14px;
+}
+
+footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+footer h3 {
+    font-size: 14px;
+    margin: 0 0 8px 0;
+    color: #4b5563;
+}
+
+footer p {
+    font-size: 12px;
+    color: #6b7280;
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+}
+
+footer ul {
+    padding-left: 20px;
+    margin: 0 0 16px 0;
+    font-size: 12px;
+    color: #4b5563;
+}
+
+footer li {
+    margin-bottom: 4px;
+}
+
+footer a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
