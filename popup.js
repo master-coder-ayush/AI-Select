@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const typeSelect = document.getElementById('type');
     const formatSelect = document.getElementById('format');
     const lengthSelect = document.getElementById('length');
+    const streamingCheckbox = document.getElementById('streaming');
     const statusMessage = document.getElementById('save-status');
 
     // Load existing settings
-    chrome.storage.sync.get(['type', 'format', 'length'], (data) => {
+    chrome.storage.sync.get(['type', 'format', 'length', 'streaming'], (data) => {
         if (data.type) typeSelect.value = data.type;
         else typeSelect.value = 'key-points';
 
@@ -14,6 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.length) lengthSelect.value = data.length;
         else lengthSelect.value = 'short';
+
+        if (data.streaming !== undefined) streamingCheckbox.checked = data.streaming;
+        else streamingCheckbox.checked = false;
     });
 
     // Save on change
@@ -21,8 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const type = typeSelect.value;
         const format = formatSelect.value;
         const length = lengthSelect.value;
+        const streaming = streamingCheckbox.checked;
 
-        chrome.storage.sync.set({ type, format, length }, () => {
+        chrome.storage.sync.set({ type, format, length, streaming }, () => {
             // Show saved feedback
             statusMessage.style.opacity = '1';
             setTimeout(() => {
@@ -34,4 +39,5 @@ document.addEventListener('DOMContentLoaded', () => {
     typeSelect.addEventListener('change', saveSettings);
     formatSelect.addEventListener('change', saveSettings);
     lengthSelect.addEventListener('change', saveSettings);
+    streamingCheckbox.addEventListener('change', saveSettings);
 });

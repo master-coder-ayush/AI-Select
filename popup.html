@@ -43,7 +43,68 @@
                 </select>
             </div>
 
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="streaming">
+                <label for="streaming">Enable Streaming (Real-time generation)</label>
+            </div>
+
             <div id="save-status" class="status-message">Saved successfully!</div>
+
+            <div class="privacy-note">
+                <strong>Privacy Note:</strong> This extension runs locally on your machine using <strong>Gemini Nano by
+                    Google</strong>. Your data will not go outside your machine.
+            </div>
+
+            <details class="config-info">
+                <summary>Configuration Meanings</summary>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Meaning</th>
+                                <th>Short</th>
+                                <th>Medium</th>
+                                <th>Long</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>TLDR</strong></td>
+                                <td>Short and to the point, providing a quick overview of the input, suitable for a busy
+                                    reader.</td>
+                                <td>1 sentence</td>
+                                <td>3 sentences</td>
+                                <td>5 sentences</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Teaser</strong></td>
+                                <td>Focuses on the most interesting or intriguing parts of the input, designed to draw
+                                    the reader in to read more.</td>
+                                <td>1 sentence</td>
+                                <td>3 sentences</td>
+                                <td>5 sentences</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Key Points</strong></td>
+                                <td>Extracts the most important points from the input, presented as a bulleted list.
+                                </td>
+                                <td>3 bullet points</td>
+                                <td>5 bullet points</td>
+                                <td>7 bullet points</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Headline</strong></td>
+                                <td>Effectively contains the main point of the input in a single sentence, in the format
+                                    of an article headline.</td>
+                                <td>12 words</td>
+                                <td>17 words</td>
+                                <td>22 words</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </details>
         </main>
 
         <footer>
@@ -52,7 +113,7 @@
             <ul>
                 <li><strong>OS:</strong> Windows 10/11, macOS 13+, Linux, or ChromeOS (16389.0.0+)</li>
                 <li><strong>Storage:</strong> At least 22 GB free space</li>
-                <li><strong>GPU/CPU:</strong> >4GB VRAM (GPU) & >16GB RAM + 4 Cores (CPU)</li>
+                <li><strong>GPU/CPU:</strong> >4GB VRAM (GPU) or >16GB RAM + 4 Cores (CPU)</li>
                 <li><strong>Network:</strong> Unmetered connection (for initial model download)</li>
             </ul>
             <p>

@@ -81,7 +81,7 @@
     return { text, rect };
   }
 
-  async function summarize(text) {
+  async function summarize(text, onChunk) {
     if (!('Summarizer' in self)) {
       throw new Error('Summarizer API is not available in this Chrome version.');
     }
@@ -95,10 +95,11 @@
       throw new Error('Click the AI button again to allow model initialization.');
     }
 
-    const options = await chrome.storage.sync.get(['type', 'format', 'length']);
+    const options = await chrome.storage.sync.get(['type', 'format', 'length', 'streaming']);
     const type = options.type || 'key-points';
     const format = options.format || 'markdown';
     const length = options.length || 'short';
+    const isStreaming = options.streaming === true;
 
     const summarizer = await Summarizer.create({
       type: type,
@@ -116,9 +117,17 @@
       }
     });
 
-    const summary = await summarizer.summarize(text);
-    summarizer.destroy();
-    return summary;
+    if (isStreaming) {
+      const stream = summarizer.summarizeStreaming(text);
+      for await (const chunk of stream) {
+        onChunk(chunk);
+      }
+      summarizer.destroy();
+    } else {
+      const summary = await summarizer.summarize(text);
+      summarizer.destroy();
+      onChunk(summary);
+    }
   }
 
   document.addEventListener('mouseup', (event) => {
@@ -150,8 +159,14 @@
     showPopup('Summarizing...');
 
     try {
-      const summary = await summarize(selectedText);
-      showPopup(summary || 'No summary returned.', false);
+      let fullSummary = '';
+      await summarize(selectedText, (chunk) => {
+        fullSummary += chunk;
+        showPopup(fullSummary || 'No summary returned.', false);
+      });
+      if (!fullSummary) {
+        showPopup('No summary returned.', false);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unexpected summarization error.';
       showPopup(message, true);
