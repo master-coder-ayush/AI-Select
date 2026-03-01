@@ -5,6 +5,7 @@
 
   let selectedText = '';
   let selectionRect = null;
+  let abortController = null;
 
   const root = document.createElement('div');
   root.id = ID_ROOT;
@@ -29,6 +30,9 @@
   closeButton.addEventListener('click', (event) => {
     event.stopPropagation();
     event.preventDefault();
+    if (abortController) {
+      abortController.abort();
+    }
     popup.hidden = true;
   });
 
@@ -81,9 +85,13 @@
     return { text, rect };
   }
 
-  async function summarize(text, onChunk) {
+  async function summarize(text, onChunk, signal) {
     if (!('Summarizer' in self)) {
       throw new Error('Summarizer API is not available in this Chrome version.');
+    }
+
+    if (signal && signal.aborted) {
+      throw new DOMException('Aborted', 'AbortError');
     }
 
     const availability = await Summarizer.availability();
@@ -101,12 +109,17 @@
     const length = options.length || 'short';
     const isStreaming = options.streaming === true;
 
-    const summarizer = await Summarizer.create({
+    if (signal && signal.aborted) {
+      throw new DOMException('Aborted', 'AbortError');
+    }
+
+    const createOptions = {
       type: type,
       format: format,
       length: length,
       monitor(monitorHandle) {
         monitorHandle.addEventListener('downloadprogress', (event) => {
+          if (signal && signal.aborted) return;
           const loadedPercent = event.total ? Math.round((event.loaded / event.total) * 100) : Math.round(event.loaded * 100);
           if (loadedPercent >= 100) {
             showPopup('Summarizing...');
@@ -115,18 +128,44 @@
           }
         });
       }
-    });
+    };
 
-    if (isStreaming) {
-      const stream = summarizer.summarizeStreaming(text);
-      for await (const chunk of stream) {
-        onChunk(chunk);
+    if (signal) {
+      createOptions.signal = signal;
+    }
+
+    let summarizer;
+    try {
+      summarizer = await Summarizer.create(createOptions);
+    } catch (e) {
+      if (signal && signal.aborted) throw new DOMException('Aborted', 'AbortError');
+      throw e;
+    }
+
+    if (signal && signal.aborted) {
+      summarizer.destroy();
+      throw new DOMException('Aborted', 'AbortError');
+    }
+
+    try {
+      if (isStreaming) {
+        const stream = summarizer.summarizeStreaming(text, { signal });
+        for await (const chunk of stream) {
+          if (signal && signal.aborted) break;
+          if (chunk !== undefined) {
+            onChunk(chunk);
+          }
+        }
+      } else {
+        const summary = await summarizer.summarize(text, { signal });
+        if (signal && !signal.aborted) {
+          onChunk(summary);
+        }
       }
-      summarizer.destroy();
-    } else {
-      const summary = await summarizer.summarize(text);
-      summarizer.destroy();
-      onChunk(summary);
+    } finally {
+      try {
+        summarizer.destroy();
+      } catch (e) { }
     }
   }
 
@@ -141,6 +180,9 @@
       return;
     }
 
+    if (abortController) {
+      abortController.abort();
+    }
     selectedText = info.text;
     selectionRect = info.rect;
     positionButton(info.rect);
@@ -156,20 +198,35 @@
       return;
     }
 
+    if (abortController) {
+      abortController.abort();
+    }
+    abortController = new AbortController();
+    const signal = abortController.signal;
+
     showPopup('Summarizing...');
 
     try {
       let fullSummary = '';
       await summarize(selectedText, (chunk) => {
+        if (signal.aborted) return;
         fullSummary += chunk;
         showPopup(fullSummary || 'No summary returned.', false);
-      });
+      }, signal);
+
+      if (signal.aborted) return;
+
       if (!fullSummary) {
         showPopup('No summary returned.', false);
       }
     } catch (error) {
+      if (signal.aborted || error.name === 'AbortError') return;
       const message = error instanceof Error ? error.message : 'Unexpected summarization error.';
       showPopup(message, true);
+    } finally {
+      if (abortController && abortController.signal === signal) {
+        abortController = null;
+      }
     }
   });
 })();
