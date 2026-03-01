@@ -2,6 +2,8 @@
 
 **AI-Select** is a zero-backend Chrome extension that adds a small floating action button next to text selected on any webpage. Pressing it triggers Chrome's built-in on-device AI (`Summarizer API` via Gemini Nano) to instantly generate concise, actionable summaries.
 
+![AI-Select Demo](demo.gif)
+
 ## ✨ Features
 
 - **Contextual UI**: Hover and click the lightweight `✨` floating button right alongside your active text selection.
@@ -26,6 +28,17 @@ Running on-device AI requires substantial underlying hardware support:
 - At least 22GB of storage.
 - An unmetered connection for the one-time local model download fallback.
 > The extension executes a fallback download listener if the AI nano model hasn't been instantiated yet natively in Chrome.
+
+### ⚠️ Troubleshooting (The device is not eligible)
+
+If you get an error stating **"The device is not eligible for running on-device model."**, you need to manually enable the API flags.
+
+Do this:
+1. Go to `chrome://flags/#optimization-guide-on-device-model`
+2. Set it to **Enabled BypassPerfRequirement**. *(Note: Plain "Enabled" often fails to expose the API if the benchmark hasn't run).*
+3. Go to `chrome://flags/#prompt-api-for-gemini-nano`
+4. Set it to **Enabled**.
+5. Relaunch Chrome completely.
 
 ---
 
