@@ -34,6 +34,8 @@
       abortController.abort();
     }
     popup.hidden = true;
+    actionButton.style.display = 'none';
+    window.getSelection().removeAllRanges();
   });
 
   popup.append(popupContent, closeButton);
