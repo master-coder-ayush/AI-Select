@@ -42,6 +42,19 @@ Do this:
 
 ---
 
+### 🌐 Explore Other Chrome AI APIs
+
+Chrome has other built-in AI APIs which you can check out on the [getting started guide](https://developer.chrome.com/docs/ai/get-started):
+
+- Translator API
+- Language Detector API
+- Summarizer API
+- Writer API and Rewriter API
+- Proofreader API
+- Prompt API
+
+---
+
 ### 📚 Documentation
 
 For deeper architectural outlines, mechanical overviews of the `Summarizer` implementation, and contribution context, please refer to the [Developer Guide](DEVELOPER_GUIDE.md).
