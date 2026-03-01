@@ -44,21 +44,50 @@
   function showPopup(message, isError = false) {
     popupContent.textContent = message;
     popup.dataset.state = isError ? 'error' : 'ready';
-    popup.hidden = false;
 
-    if (!selectionRect) {
-      return;
+    if (popup.hidden) {
+      popup.hidden = false;
+      positionPopup();
+    }
+  }
+
+  function positionPopup() {
+    if (!selectionRect) return;
+
+    const SPACE_MARGIN = 12;
+    const spaceAbove = selectionRect.viewportTop;
+    const spaceBelow = window.innerHeight - selectionRect.viewportBottom;
+
+    popup.style.top = '';
+    popup.style.bottom = '';
+    popup.style.left = '';
+    popup.style.transform = '';
+
+    if (spaceBelow >= 250 || spaceBelow >= spaceAbove) {
+      popup.style.top = `${selectionRect.absoluteBottom + SPACE_MARGIN}px`;
+      popup.style.maxHeight = `${Math.max(150, spaceBelow - (SPACE_MARGIN * 2))}px`;
+    } else {
+      popup.style.top = `${selectionRect.absoluteTop - SPACE_MARGIN}px`;
+      popup.style.transform = 'translateY(-100%)';
+      popup.style.maxHeight = `${Math.max(150, spaceAbove - (SPACE_MARGIN * 2))}px`;
     }
 
-    const top = window.scrollY + selectionRect.bottom + 10;
-    const left = window.scrollX + selectionRect.left;
-    popup.style.top = `${top}px`;
-    popup.style.left = `${left}px`;
+    let leftPos = selectionRect.viewportLeft;
+    const popupWidth = Math.min(420, window.innerWidth - 24);
+
+    if (leftPos + popupWidth > window.innerWidth - SPACE_MARGIN) {
+      leftPos = window.innerWidth - popupWidth - SPACE_MARGIN;
+    }
+    if (leftPos < SPACE_MARGIN) {
+      leftPos = SPACE_MARGIN;
+    }
+
+    popup.style.left = `${selectionRect.scrollX + leftPos}px`;
   }
 
   function positionButton(rect) {
-    const top = window.scrollY + rect.bottom + 8;
-    const left = window.scrollX + rect.right - 16;
+    const top = rect.absoluteBottom + 8;
+    const left = rect.absoluteRight - 16;
 
     actionButton.style.top = `${top}px`;
     actionButton.style.left = `${left}px`;
@@ -82,7 +111,20 @@
       return null;
     }
 
-    return { text, rect };
+    const absoluteRect = {
+      absoluteTop: window.scrollY + rect.top,
+      absoluteBottom: window.scrollY + rect.bottom,
+      absoluteLeft: window.scrollX + rect.left,
+      absoluteRight: window.scrollX + rect.right,
+      viewportTop: rect.top,
+      viewportBottom: rect.bottom,
+      viewportLeft: rect.left,
+      width: rect.width,
+      height: rect.height,
+      scrollX: window.scrollX
+    };
+
+    return { text, rect: absoluteRect };
   }
 
   async function summarize(text, onChunk, signal) {
