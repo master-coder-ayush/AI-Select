@@ -174,19 +174,21 @@
       return;
     }
 
-    const info = getSelectionInfo();
-    if (!info) {
-      actionButton.style.display = 'none';
-      return;
-    }
+    setTimeout(() => {
+      const info = getSelectionInfo();
+      if (!info) {
+        actionButton.style.display = 'none';
+        return;
+      }
 
-    if (abortController) {
-      abortController.abort();
-    }
-    selectedText = info.text;
-    selectionRect = info.rect;
-    positionButton(info.rect);
-    popup.hidden = true;
+      if (abortController) {
+        abortController.abort();
+      }
+      selectedText = info.text;
+      selectionRect = info.rect;
+      positionButton(info.rect);
+      popup.hidden = true;
+    }, 10);
   });
 
   actionButton.addEventListener('click', async (event) => {
